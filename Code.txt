@@ -1,0 +1,103 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.Dimension;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class ScreenShort_final {
+
+	 public static void main(String[] args) {
+	        
+	        System.setProperty("webdriver.chrome.driver", "Z:/Drivers/chromedriver-win64/chromedriver-win64/chromedriver.exe");
+	        
+	       
+	        WebDriver driver = new ChromeDriver();
+	        
+	        try {
+	           
+	            driver.get("https://www.getcalley.com/page-sitemap.xml");
+	            clickLinkAndTakeScreenshots(driver, "https://www.getcalley.com/");
+	            System.out.println("First Page Completed");
+
+	          
+	            driver.navigate().back();
+	            System.out.println("2nd Page Started");
+	            clickLinkAndTakeScreenshots(driver, "https://www.getcalley.com/calley-lifetime-offer/");
+	            System.out.println("2nd Page Completed");
+	            
+	            driver.navigate().back();
+	            System.out.println("3nd Page Started");
+	            clickLinkAndTakeScreenshots(driver, "https://www.getcalley.com/see-a-demo/");
+	            System.out.println("3nd Page Completed");
+	            
+	            driver.navigate().back();
+	            System.out.println("4th Page Started");
+	            clickLinkAndTakeScreenshots(driver, "https://www.getcalley.com/calley-teams-features/");
+	            System.out.println("4th Page Completed");
+	            
+	            driver.navigate().back();
+	            System.out.println("5th Page Started");
+	            clickLinkAndTakeScreenshots(driver, "https://www.getcalley.com/calley-pro-features/");
+	            System.out.println("5th Page Completed");
+
+	        } finally {
+	            
+	            driver.quit();
+	        }
+	    }
+	    
+	   
+	    public static void clickLinkAndTakeScreenshots(WebDriver driver, String linkText) {
+	        try {
+	           
+	            driver.findElement(By.linkText(linkText)).click();
+	            
+	            
+	            String deviceName = "Desktop";
+	            Dimension[] resolutions = {
+	                new Dimension(1920, 1080),   
+	                new Dimension(1366, 768),   
+	                new Dimension(1536, 864)
+	            };
+	            
+	           
+	            for (Dimension resolution : resolutions) {
+	                takeScreenshot(driver, deviceName, resolution);
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	   
+	    public static void takeScreenshot(WebDriver driver, String deviceName, Dimension resolution) throws IOException {
+	        
+	        driver.manage().window().setSize(resolution);
+	        
+	        
+	        String resolutionStr = resolution.width + "x" + resolution.height;
+	        String timestamp = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+	        Path screenshotDir = Paths.get(deviceName, resolutionStr);
+	        Files.createDirectories(screenshotDir);
+	        
+	      
+	        TakesScreenshot screenshot = (TakesScreenshot) driver;
+	        File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
+	        File destFile = new File(screenshotDir.toString(), "Screenshot-" + timestamp + ".png");
+	        Files.move(srcFile.toPath(), destFile.toPath());
+	        System.out.println("Screenshot saved: " + destFile.getAbsolutePath());
+	    }
+	}
+
+
